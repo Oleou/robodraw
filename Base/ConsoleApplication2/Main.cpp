@@ -5,6 +5,8 @@
 #include <opencv2/core/core.hpp>
 #include <stdlib.h>
 #include <stdio.h>
+#include <cstdlib>
+#include <fstream>
 
 using namespace cv;
 
@@ -18,7 +20,7 @@ int main(int argc, char** argv)
 	int delta = 0;
 	int ddepth = CV_16S;
 	//Mat invert, src_gray;
-	int c;
+	//int c;
 
 	/// получение изображения
 	src = imread(argv[1]);
@@ -57,10 +59,38 @@ int main(int argc, char** argv)
 	//Инверсия
 	bitwise_not(grad, grad);
 
+
+	try {
+      imwrite("alpha.jpg", grad);
+
+	}
+   catch (std::runtime_error& ex) {
+     fprintf(stderr, "Exception converting image to PNG format: %s\n", ex.what());
+     return 1;
+
+	}
+	
+   //imwrite("test.jpg", grad);
+   		
+	//CvMat* converted = cvEncodeImage(const char* ext, const CvArr* grad, const int* _params);
+
+	//uchar *data = grad.data;
+	IplImage *image = (cvLoadImage("alpha.jpg", 0));
+	if (!image)
+		return 1;
+	std::ofstream out("test.txt");
+	uchar* ptr = (uchar*)(image->imageData);
+	for (int y = 0; y < image->height; y++)
+	{
+		for (int x = 0; x < image->width; x++)
+			out << ptr[y * image->widthStep + x] << ' ';
+		out << '\n';
+	}
+	//cvReleaseImage(&image);
+
 	imshow(window_name, grad);
 	waitKey(0);
 
-	return 0;
 }
 
 /////////////////////////////////////////////////
