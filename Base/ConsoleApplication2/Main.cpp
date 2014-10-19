@@ -7,8 +7,10 @@
 #include <stdio.h>
 #include <cstdlib>
 #include <fstream>
+#include <iostream>
 
 using namespace cv;
+using namespace std;
 
 int main(int argc, char** argv)
 {
@@ -56,8 +58,12 @@ int main(int argc, char** argv)
 	/// Сумма градиентов
 	addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);
 	
-	//Инверсия
-	bitwise_not(grad, grad);
+	/*Инверсия
+		При инверсии в матричном виде существуют слишком большие коэффициенты, 
+		для меньшего размера и удобства читаемости закомментим;
+		данное преобразование важно	лишь для визуального восприятия
+	*/
+	//bitwise_not(grad, grad);
 
 
 	try {
@@ -70,23 +76,19 @@ int main(int argc, char** argv)
 
 	}
 	
-   //imwrite("test.jpg", grad);
-   		
-	//CvMat* converted = cvEncodeImage(const char* ext, const CvArr* grad, const int* _params);
-
-	//uchar *data = grad.data;
+    std::ofstream out("test.txt");
 	IplImage *image = (cvLoadImage("alpha.jpg", 0));
-	if (!image)
-		return 1;
-	std::ofstream out("test.txt");
-	uchar* ptr = (uchar*)(image->imageData);
-	for (int y = 0; y < image->height; y++)
-	{
-		for (int x = 0; x < image->width; x++)
-			out << ptr[y * image->widthStep + x] << ' ';
-		out << '\n';
-	}
-	//cvReleaseImage(&image);
+	//if (!image)
+	//	return 1;
+	Mat mtx(image);
+	out << mtx << ' ';
+
+	/*Инверсия
+	При инверсии в матричном виде существуют слишком большие коэффициенты,
+	для меньшего размера и удобства читаемости закомментим;
+	данное преобразование важно	лишь для визуального восприятия
+	*/
+	bitwise_not(grad, grad);
 
 	imshow(window_name, grad);
 	waitKey(0);
