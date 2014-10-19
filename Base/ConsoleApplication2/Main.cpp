@@ -58,29 +58,15 @@ int main(int argc, char** argv)
 	/// Сумма градиентов
 	addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);
 	
-	/*Инверсия
-		При инверсии в матричном виде существуют слишком большие коэффициенты, 
-		для меньшего размера и удобства читаемости закомментим;
-		данное преобразование важно	лишь для визуального восприятия
+	/*
+		Вывод матричного представления изображения в файл
+		В этом выводе можно будет фильтровать значения
 	*/
-	//bitwise_not(grad, grad);
-
-
-	try {
-      imwrite("alpha.jpg", grad);
-
-	}
-   catch (std::runtime_error& ex) {
-     fprintf(stderr, "Exception converting image to PNG format: %s\n", ex.what());
-     return 1;
-
-	}
-	
-    std::ofstream out("test.txt");
-	IplImage *image = (cvLoadImage("alpha.jpg", 0));
+    std::ofstream out("matrix.txt");
+	//IplImage *image = (cvLoadImage("alpha.jpg", 0));
 	//if (!image)
 	//	return 1;
-	Mat mtx(image);
+	Mat mtx(grad);
 	out << mtx << ' ';
 
 	/*Инверсия
@@ -88,8 +74,18 @@ int main(int argc, char** argv)
 	для меньшего размера и удобства читаемости закомментим;
 	данное преобразование важно	лишь для визуального восприятия
 	*/
-	bitwise_not(grad, grad);
+	//bitwise_not(grad, grad);
 
+
+	try {
+		imwrite("postcontrol.jpg", grad);
+
+	}
+	catch (std::runtime_error& ex) {
+		fprintf(stderr, "Exception converting image to JPG format: %s\n", ex.what());
+		return 1;
+
+	}
 	imshow(window_name, grad);
 	waitKey(0);
 
